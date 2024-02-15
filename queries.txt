@@ -1,0 +1,118 @@
+
+-- create authors table
+
+CREATE TABLE authors (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100) NOT NULL
+);
+
+
+-- Insert sample data into the authors table
+
+INSERT INTO authors (author_id, author_name) VALUES
+(1, 'J.K. Rowling'),
+(2,'Robert T. Kiyosaki'),
+(3,'Radhakrishnan Pillai'),
+(4, 'William Shakespeare' ),
+(5, 'Chetan Bhagat');
+
+
+-- create books table
+
+CREATE TABLE books (
+    book_id INT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    author_id INT,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (author_id) REFERENCES authors(author_id)
+);
+
+
+-- Insert sample data into the books table
+
+INSERT INTO books (book_id, title, author_id, price) VALUES
+(1, 'Harry Potter', 1, 2700),
+(2, 'Rich Dad Poor Dad', 2,430),
+(3, 'Chanakyaniti', 3,127),
+(4, 'Romeo and Juliet', 4,100),
+(5, 'Half Girlfriend', 5, 221);
+
+
+-- create customers table
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL
+);
+
+
+-- Insert sample data into the customers table
+
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Sneha'),
+(2, 'Pooja'),
+(3, 'rohini');
+
+
+-- create orders table
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    book_id INT,
+    customer_id INT,
+    order_date DATE NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES books(book_id),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+
+-- Insert sample data into the orders table
+
+INSERT INTO orders (order_id, book_id, customer_id, order_date, quantity) VALUES
+(1, 1, 1, '2024-02-15', 1),
+(2, 5, 2, '2024-02-14', 2),
+(3, 4, 3, '2024-02-09', 1);
+
+
+
+
+
+-- Query to retrieve a list of top-selling books
+
+
+SELECT b.title, SUM(o.quantity) AS total_sold
+FROM books b
+JOIN orders o ON b.book_id = o.book_id
+GROUP BY b.title
+ORDER BY total_sold DESC;
+
+
+Output:
+
++------------------+------------+
+| title            | total_sold |
++------------------+------------+
+| Half Girlfriend  |          2 |
+| Harry Potter     |          1 |
+| Romeo and Juliet |          1 |
++------------------+------------+
+
+
+
+-- Query to calculate total sales revenue for a given period (e.g., for the month of January 2022)
+
+
+SELECT SUM(b.price * o.quantity) AS total_revenue
+FROM books b
+JOIN orders o ON b.book_id = o.book_id
+WHERE o.order_date >= '2024-02-14' AND o.order_date <= '2024-02-15';
+
+
+Output:
+
++---------------+
+| total_revenue |
++---------------+
+|       3142.00 |
++---------------+
